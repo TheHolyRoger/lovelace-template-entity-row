@@ -110,7 +110,7 @@ class TemplateEntityRow extends LitElement {
       this.config.color !== undefined || active !== undefined
         ? this.config.color ??
           (active !== undefined && active
-            ? thisStyles.getPropertyValue("--paper-item-icon-active-color")
+            ? thisStyles.getPropertyValue("--state-active-color")
             : thisStyles.getPropertyValue("--paper-item-icon-color"))
         : undefined;
     return html`
@@ -126,7 +126,7 @@ class TemplateEntityRow extends LitElement {
           .stateObj=${entity}
           @action=${this._actionHandler}
           style="${color
-            ? `--paper-item-icon-color: ${color}; --paper-item-icon-active-color: ${color};`
+            ? `--paper-item-icon-color: ${color}; --state-active-color: ${color};`
             : ``}"
           .overrideIcon=${icon}
           .overrideImage=${image}
