@@ -15,7 +15,6 @@ const OPTIONS = [
   "condition",
   "image",
   "entity",
-  "device_class",
   // Secret option -
   // Set color to a hs-color value ("[<hue>,<saturation>]")
   // with hue in the range 0-360 and saturation 0-100.
@@ -89,13 +88,15 @@ class TemplateEntityRow extends LitElement {
       attributes: { icon: "no:icon" },
     };
 
+    const domain = entity.entity_id.split(".")[0];
+
     const domain_device_class =
-      this.config.device_class !== undefined && this.config.device_class
-        ? this.config.device_class
-        : entity.entity_id.split(".")[0];
+      entity.attributes.device_class !== undefined && entity.attributes.device_class
+        ? `${domain}-${entity.attributes.device_class}`
+        : domain;
 
     const state_identifier =
-      domain_device_class != "sensor"
+      domain != "sensor"
         ? `${domain_device_class}-`
         : '';
 
@@ -111,19 +112,34 @@ class TemplateEntityRow extends LitElement {
     const secondary = this.config.secondary;
     const state =
       this.config.state !== undefined ? this.config.state : entity?.state;
+
+    const css_state =
+      (state == true || String(state).toLowerCase() == 'on')
+        ? 'on'
+        : (state == false || String(state).toLowerCase() == 'off')
+          ? 'off'
+          : 'active';
+
     const active = this.config.active;
     if (active !== undefined) {
       entity.attributes.brightness = 255;
     }
 
     const thisStyles = window.getComputedStyle(this);
+    const priorityActiveColor = thisStyles.getPropertyValue(`--state-${state_identifier}${css_state}-color`);
     const color =
       this.config.color !== undefined || active !== undefined
         ? this.config.color ??
           (active !== undefined && active
-            ? thisStyles.getPropertyValue(`--state-${state_identifier}active-color`)
-            : thisStyles.getPropertyValue("--paper-item-icon-color"))
+            ? priorityActiveColor !== undefined
+              ? priorityActiveColor
+              : thisStyles.getPropertyValue("--state-active-color")
+            : thisStyles.getPropertyValue("--state-icon-color"))
         : undefined;
+    const styleColorString =
+      priorityActiveColor !== undefined && `--state-${state_identifier}${css_state}-color` != "--state-active-color"
+        ? `--state-${state_identifier}${css_state}-color: ${color}; --state-active-color: ${color};`
+        : `--state-active-color: ${color};`;
     return html`
       <div
         id="wrapper"
@@ -137,7 +153,7 @@ class TemplateEntityRow extends LitElement {
           .stateObj=${entity}
           @action=${this._actionHandler}
           style="${color
-            ? `--paper-item-icon-color: ${color}; --state-active-color: ${color};`
+            ? `--state-icon-color: ${color}; ${styleColorString}`
             : ``}"
           .overrideIcon=${icon}
           .overrideImage=${image}
