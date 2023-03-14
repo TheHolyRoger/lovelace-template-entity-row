@@ -113,12 +113,10 @@ class TemplateEntityRow extends LitElement {
     const state =
       this.config.state !== undefined ? this.config.state : entity?.state;
 
-    const css_state =
+    const css_active_state =
       (state == true || String(state).toLowerCase() == 'on')
         ? 'on'
-        : (state == false || String(state).toLowerCase() == 'off')
-          ? 'off'
-          : 'active';
+        : 'active';
 
     const active = this.config.active;
     if (active !== undefined) {
@@ -126,7 +124,7 @@ class TemplateEntityRow extends LitElement {
     }
 
     const thisStyles = window.getComputedStyle(this);
-    const priorityActiveColor = thisStyles.getPropertyValue(`--state-${state_identifier}${css_state}-color`);
+    const priorityActiveColor = thisStyles.getPropertyValue(`--state-${state_identifier}${css_active_state}-color`);
     const color =
       this.config.color !== undefined || active !== undefined
         ? this.config.color ??
@@ -137,8 +135,8 @@ class TemplateEntityRow extends LitElement {
             : thisStyles.getPropertyValue("--state-icon-color"))
         : undefined;
     const styleColorString =
-      priorityActiveColor !== undefined && `--state-${state_identifier}${css_state}-color` != "--state-active-color"
-        ? `--state-${state_identifier}${css_state}-color: ${color}; --state-active-color: ${color};`
+      priorityActiveColor !== undefined && `--state-${state_identifier}${css_active_state}-color` != "--state-active-color"
+        ? `--state-${state_identifier}${css_active_state}-color: ${color}; --state-active-color: ${color};`
         : `--state-active-color: ${color};`;
     return html`
       <div
