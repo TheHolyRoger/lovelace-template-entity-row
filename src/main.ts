@@ -94,6 +94,11 @@ class TemplateEntityRow extends LitElement {
         ? this.config.device_class
         : entity.entity_id.split(".")[0];
 
+    const state_identifier =
+      domain_device_class != "sensor"
+        ? `${domain_device_class}-`
+        : '';
+
     const icon =
       this.config.icon !== undefined
         ? this.config.icon || "no:icon"
@@ -116,7 +121,7 @@ class TemplateEntityRow extends LitElement {
       this.config.color !== undefined || active !== undefined
         ? this.config.color ??
           (active !== undefined && active
-            ? thisStyles.getPropertyValue(`--state-${domain_device_class}-active-color`)
+            ? thisStyles.getPropertyValue(`--state-${state_identifier}active-color`)
             : thisStyles.getPropertyValue("--paper-item-icon-color"))
         : undefined;
     return html`
