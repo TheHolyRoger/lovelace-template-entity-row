@@ -15,6 +15,7 @@ const OPTIONS = [
   "condition",
   "image",
   "entity",
+  "device_class",
   // Secret option -
   // Set color to a hs-color value ("[<hue>,<saturation>]")
   // with hue in the range 0-360 and saturation 0-100.
@@ -88,6 +89,11 @@ class TemplateEntityRow extends LitElement {
       attributes: { icon: "no:icon" },
     };
 
+    const domain_device_class =
+      this.config.device_class !== undefined && this.config.device_class
+        ? this.config.device_class
+        : entity.entity_id.split(".")[0];
+
     const icon =
       this.config.icon !== undefined
         ? this.config.icon || "no:icon"
@@ -110,7 +116,7 @@ class TemplateEntityRow extends LitElement {
       this.config.color !== undefined || active !== undefined
         ? this.config.color ??
           (active !== undefined && active
-            ? thisStyles.getPropertyValue("--state-active-color")
+            ? thisStyles.getPropertyValue(`--state-${domain_device_class}-active-color`)
             : thisStyles.getPropertyValue("--paper-item-icon-color"))
         : undefined;
     return html`
