@@ -113,8 +113,11 @@ class TemplateEntityRow extends LitElement {
     const state =
       this.config.state !== undefined ? this.config.state : entity?.state;
 
+    const css_state =
+      entity?.state !== undefined ? entity?.state : state;
+
     const css_active_state =
-      (state == true || String(state).toLowerCase() == 'on')
+      (css_state == true || String(css_state).toLowerCase() == 'on')
         ? 'on'
         : 'active';
 
