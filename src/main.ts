@@ -127,20 +127,22 @@ class TemplateEntityRow extends LitElement {
     }
 
     const thisStyles = window.getComputedStyle(this);
-    const priorityActiveColor = thisStyles.getPropertyValue(`--state-${state_identifier}${css_active_state}-color`);
+    const priorityActiveRule = `--state-${state_identifier}${css_active_state}-color`;
+    const secondaryActiveRule = '--state-active-color';
+    const priorityActiveColor = thisStyles.getPropertyValue(priorityActiveRule);
     const color =
       this.config.color !== undefined || active !== undefined
         ? this.config.color ??
           (active !== undefined && active
-            ? priorityActiveColor !== undefined
+            ? (priorityActiveColor !== undefined
               ? priorityActiveColor
-              : thisStyles.getPropertyValue("--state-active-color")
+              : thisStyles.getPropertyValue(secondaryActiveRule))
             : thisStyles.getPropertyValue("--state-icon-color"))
         : undefined;
     const styleColorString =
-      priorityActiveColor !== undefined && `--state-${state_identifier}${css_active_state}-color` != "--state-active-color"
-        ? `--state-${state_identifier}${css_active_state}-color: ${color}; --state-active-color: ${color};`
-        : `--state-active-color: ${color};`;
+      priorityActiveColor !== undefined && priorityActiveRule != secondaryActiveRule
+        ? `${priorityActiveRule}: ${color}; ${secondaryActiveRule}: ${color};`
+        : `${secondaryActiveRule}: ${color};`;
     return html`
       <div
         id="wrapper"
@@ -154,7 +156,7 @@ class TemplateEntityRow extends LitElement {
           .stateObj=${entity}
           @action=${this._actionHandler}
           style="${color
-            ? `--state-icon-color: ${color}; ${styleColorString}`
+            ? `--paper-item-icon-color: ${color}; --state-icon-color: ${color}; ${styleColorString}`
             : ``}"
           .overrideIcon=${icon}
           .overrideImage=${image}
